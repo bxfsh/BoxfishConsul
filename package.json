@@ -1,5 +1,5 @@
 {
-  "name": "BoxfishCurl",
+  "name": "boxfishconsul",
   "version": "1.0.0",
   "description": "Curl library for the boxfish ads platform",
   "main": "index.js",

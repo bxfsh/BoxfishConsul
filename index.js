@@ -2,105 +2,73 @@
 
   'use strict';
 
-  /**
-   * dependencies
-   */  
-  var promise 	 = require('promised-io/promise');
+  var promise    = require('promised-io/promise');
 
   /**
-   * Curl service
-   * example call 
-   * 
-   * 		curl.req({
-   *				host 	: 'ipinfo.io',
-   *				path 	: '/',
-   *				method	: 'GET'
-   *			}, function(err, data) { // do stuff your data });
+   * EpgController
    *
-   * @type {Object}
+   *  Initialise the boxfish consul and returns the api
+   *  docs: https://www.npmjs.com/package/consul
+   *
+   * @description :: Server-side logic for managing Epgs
+   * @help        :: See http://links.sailsjs.org/docs/controllers
    */
-  module.exports = {
+  var consulService = {
 
-  	/**
-  	 * makes a curl request
-  	 * @param  {[type]}   options  all configurations
-  	 * @return {[type]}            the http request object
-  	 */
-  	req: function(options) {
+    /**
+     * initialise the consul helper
+     * @return {[type]} [description]
+     */
+    init: function index() {
+      
+      'use strict';
 
-  		var retVal = '';
-  		var https = require( options.ssh ? 'https' : 'http');
-  		var o = {
-          host: options.host,
-          path: options.path,
-          port: options.port || 80,
-          method: options.method || 'GET',
-          headers : options.headers || { }
-      };
-      var deferred = promise.defer();
-      console.log('curl options', o);
-      console.log('curl data', options.data);
-      var req = https.request(o, function(res) {
+      sails.log.debug(new Date(), 'Connecting to Consul on', sails.config.consul.host, ':', sails.config.consul.port);
 
-        res.setEncoding('utf8');
-        res.on('data', function (chunk) { 
-          console.log(new Date(), 'on data', chunk);
-          retVal += chunk; 
-        });
+      this.api = require('consul')({
+        host: sails.config.consul.host,
+        port: sails.config.consul.port,
+      });
 
-        res.on('end', function() {
+      return this;
+    },
 
-        	var data = retVal;
-        	
-        	try {
-            if (retVal.length && retVal.length ===0) {
-              console.log('CURL: response is empty', res.req._header);
-            } else if (typeof retVal === 'string') {
-            	data = JSON.parse(retVal);
-          	}
-          } catch ( _ ) {
-            console.log('CURL: error while parsing data');
-          }
+    /**
+     * find services by name
+     * @param  {[type]} name [description]
+     * @return {[type]}      [description]
+     */
+    findService: function findService(name) {
 
-          switch (res.statusCode) {
-            case 500:
-            case 400:
-            case 404:
-              console.log(data);
-              console.log('CURL: returned code', res.statusCode, 'from request', res.req._header);
-              deferred.reject(data, data);
-              break;
-            default:
-              deferred.resolve(data, res);
-              break;
-          }
+      var d = promise.defer();
 
-        });
+      this.init();
 
-    	});
+      this.api.agent.service.list(function(err, services) {
 
-      if (options.data) {
-        if (typeof options.data !== 'string') {
-          options.data = JSON.stringify(options.data);
+        if (!services) {
+          d.reject('consul not up');
+          return;
         }
 
-        o.headers['Content-Length'] = options.data.length;
-        
-        req.write(options.data);
-      } 
+        var arr = Object.keys(services).map(function (key) {
+          return services[key];
+        }).filter(function(item) {
+          return (item.Service.toLowerCase() === name.toLowerCase()) ? item : null;
+        });
 
-      if (typeof o.headers['Content-Type'] === 'undefined') {
-        o.headers['Content-Type'] = 'application/x-www-form-urlencoded';
-      }
+        if (arr.length === 0) {
+          d.reject('No service found.');
+        } else d.resolve(arr[0]);
 
-      req.on('error', function(e) {
-        deferred.reject(null, 'problem with request: ' + e);
-      }).end();
+      });
 
-  	  return deferred;
+      return d;
 
-  	}
+    }
 
   };
+
+  module.exports = consulService;
 
 })(module); // jshint ignore:line

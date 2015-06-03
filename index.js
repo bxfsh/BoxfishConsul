@@ -23,7 +23,7 @@
       
       'use strict';
 
-      sails.log.debug(new Date(), 'Connecting to Consul on', sails.config.consul.host, ':', sails.config.consul.port);
+      console.log(new Date(), 'Connecting to Consul on', sails.config.consul.host, ':', sails.config.consul.port);
 
       this.api = require('consul')({
         host: sails.config.consul.host,

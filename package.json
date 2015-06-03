@@ -1,6 +1,6 @@
 {
   "name": "boxfishconsul",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Consul library for the boxfish ads platform",
   "main": "index.js",
   "scripts": {
@@ -17,6 +17,7 @@
   "license": "ISC",
   "dependencies": {
     "consul": "^0.14.0",
+    "consul-node": "0.0.2",
     "promised-io": "^0.3.5"
   },
   "devDependencies": {

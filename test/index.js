@@ -24,6 +24,7 @@ describe('BoxfishConsul', function() {
 
 			consul.init().api.catalog.service.nodes('consul', function(err, result) {
 				if (err) throw err;
+				console.log(result);
 				assert(true, 'service found');
 				done();
 			});

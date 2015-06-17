@@ -59,7 +59,7 @@
 
       this.init().api.catalog.service.nodes(name, function(err, result) {
         if (err) d.reject(err);
-        else d.resolve(result);
+        else d.resolve(result[0]);
       });
 
       return d;

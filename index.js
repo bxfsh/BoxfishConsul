@@ -23,14 +23,30 @@
       
       'use strict';
 
-      console.log(new Date(), 'Connecting to Consul on', sails.config.consul.host, ':', sails.config.consul.port);
+      var host = typeof sails === 'undefined' ? '127.0.0.1' : sails.config.consul.host;
+      var port = typeof sails === 'undefined' ? 8500 : sails.config.consul.port;
+
+      console.log(new Date(), 'Connecting to Consul on', host, ':', port);
 
       this.api = require('consul')({
-        host: sails.config.consul.host,
-        port: sails.config.consul.port,
+        host: host,
+        port: port
       });
 
       return this;
+    },
+
+    /**
+     * get the nodes list
+     * @param  {Function} cb [description]
+     * @return {[type]}      [description]
+     */
+    nodeList: function nodeList(cb) {
+      this.init();
+      this.api.catalog.node.list(function(err, list) {
+        if (err) throw err;
+        cb(list);
+      });
     },
 
     /**
@@ -41,27 +57,57 @@
     findService: function findService(name) {
 
       var d = promise.defer();
+      var self = this;
 
       this.init();
 
-      this.api.agent.service.list(function(err, services) {
+      // gets the node list
+      this.nodeList(function(nodes) {
 
-        if (!services) {
-          d.reject('consul not up');
-          return;
-        }
+        // gets the services for the first node returned
+        self.api.catalog.node.services(nodes[0].Node, function(err, data) {
 
-        var arr = Object.keys(services).map(function (key) {
-          return services[key];
-        }).filter(function(item) {
-          return (item.Service.toLowerCase() === name.toLowerCase()) ? item : null;
+          if (err) throw err;
+
+          var services = data.Services;
+
+          if (!services) {
+            d.reject('consul not up');
+            return;
+          }
+
+          var arr = Object.keys(services).map(function (key) {
+            return services[key];
+          }).filter(function(item) {
+            return (item.Service.toLowerCase() === name.toLowerCase()) ? item : null;
+          });
+
+          if (arr.length === 0) {
+            d.reject('No service found.');
+          } else d.resolve(arr[0]);
+
         });
 
-        if (arr.length === 0) {
-          d.reject('No service found.');
-        } else d.resolve(arr[0]);
-
       });
+
+      // this.api.agent.service.list(function(err, services) {
+
+      //   if (!services) {
+      //     d.reject('consul not up');
+      //     return;
+      //   }
+
+      //   var arr = Object.keys(services).map(function (key) {
+      //     return services[key];
+      //   }).filter(function(item) {
+      //     return (item.Service.toLowerCase() === name.toLowerCase()) ? item : null;
+      //   });
+
+      //   if (arr.length === 0) {
+      //     d.reject('No service found.');
+      //   } else d.resolve(arr[0]);
+
+      // });
 
       return d;
 

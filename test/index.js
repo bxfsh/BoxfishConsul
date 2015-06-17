@@ -6,28 +6,34 @@ describe('BoxfishConsul', function() {
 
 	it('should connect to local consul', function() {
 		consul.nodeList(function(nodes) {
-			console.log(nodes);
 			assert(true, 'nodes found');
 		});
 	});
 
-	it('should get the list of services', function() {
+	it('should get the list of services', function(done) {
 		consul.init().api.agent.service.list(function(err, services) {
 			if (err) throw err;
-			console.log(services);
+			else done();
 		});
 	});
 
-	it('should get the list of services', function() {
+	it('should get the list of services', function(done) {
 		consul.init().api.catalog.service.list(function(err, services) {
 			if (err) throw err;
-			console.log(services);
+			assert(true, 'found the list of services' + services);
+
+			consul.init().api.catalog.service.nodes('consul', function(err, result) {
+				if (err) throw err;
+				assert(true, 'service found');
+				done();
+			});
 		});
 	});
 
-	it('should get the list of services', function() {
+	it('should get the list of services', function(done) {
 		consul.findService('consul').then(function(services) {
 			console.log(services);
+			done();
 		}, assert);
 	});
 	

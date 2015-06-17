@@ -57,48 +57,9 @@
       var d = promise.defer();
       var self = this;
 
-      this.init();
-
-      // this.api.agent.service.list(function(err, services) {
-
-      //   if (!services) {
-      //     d.reject('consul not up');
-      //     return;
-      //   }
-
-      //   var arr = Object.keys(services).map(function (key) {
-      //     return services[key];
-      //   }).filter(function(item) {
-      //     return (item.Service.toLowerCase() === name.toLowerCase()) ? item : null;
-      //   });
-
-      //   if (arr.length === 0) {
-      //     d.reject('No service found.');
-      //   } else d.resolve(arr[0]);
-
-      // });
-      
-      this.api.catalog.service.list(function(err, data) {
-
-        if (err) throw err;
-
-        var services = data;
-
-        if (!services) {
-          d.reject('consul not up');
-          return;
-        }
-
-        var arr = Object.keys(services).map(function (key) {
-          return services[key];
-        }).filter(function(item) {
-          return (item.Service.toLowerCase() === name.toLowerCase()) ? item : null;
-        });
-
-        if (arr.length === 0) {
-          d.reject('No service found.');
-        } else d.resolve(arr[0]);
-
+      this.init().api.catalog.service.nodes(name, function(err, result) {
+        if (err) d.reject(err);
+        else d.resolve(result);
       });
 
       return d;

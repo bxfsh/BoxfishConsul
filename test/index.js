@@ -10,5 +10,25 @@ describe('BoxfishConsul', function() {
 			assert(true, 'nodes found');
 		});
 	});
+
+	it('should get the list of services', function() {
+		consul.init().api.agent.service.list(function(err, services) {
+			if (err) throw err;
+			console.log(services);
+		});
+	});
+
+	it('should get the list of services', function() {
+		consul.init().api.catalog.service.list(function(err, services) {
+			if (err) throw err;
+			console.log(services);
+		});
+	});
+
+	it('should get the list of services', function() {
+		consul.findService('consul').then(function(services) {
+			console.log(services);
+		}, assert);
+	});
 	
 });

@@ -26,8 +26,6 @@
       var host = typeof sails === 'undefined' ? '127.0.0.1' : sails.config.consul.host;
       var port = typeof sails === 'undefined' ? 8500 : sails.config.consul.port;
 
-      console.log(new Date(), 'Connecting to Consul on', host, ':', port);
-
       this.api = require('consul')({
         host: host,
         port: port
@@ -61,35 +59,6 @@
 
       this.init();
 
-      // gets the node list
-      this.nodeList(function(nodes) {
-
-        // gets the services for the first node returned
-        self.api.catalog.node.services(nodes[0].Node, function(err, data) {
-
-          if (err) throw err;
-
-          var services = data.Services;
-
-          if (!services) {
-            d.reject('consul not up');
-            return;
-          }
-
-          var arr = Object.keys(services).map(function (key) {
-            return services[key];
-          }).filter(function(item) {
-            return (item.Service.toLowerCase() === name.toLowerCase()) ? item : null;
-          });
-
-          if (arr.length === 0) {
-            d.reject('No service found.');
-          } else d.resolve(arr[0]);
-
-        });
-
-      });
-
       // this.api.agent.service.list(function(err, services) {
 
       //   if (!services) {
@@ -108,6 +77,29 @@
       //   } else d.resolve(arr[0]);
 
       // });
+      
+      this.api.catalog.service.list(function(err, data) {
+
+        if (err) throw err;
+
+        var services = data;
+
+        if (!services) {
+          d.reject('consul not up');
+          return;
+        }
+
+        var arr = Object.keys(services).map(function (key) {
+          return services[key];
+        }).filter(function(item) {
+          return (item.Service.toLowerCase() === name.toLowerCase()) ? item : null;
+        });
+
+        if (arr.length === 0) {
+          d.reject('No service found.');
+        } else d.resolve(arr[0]);
+
+      });
 
       return d;
 

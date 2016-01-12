@@ -23,8 +23,8 @@
       
       'use strict';
 
-      var host = typeof sails === 'undefined' ? '127.0.0.1' : sails.config.consul.host;
-      var port = typeof sails === 'undefined' ? 8500 : sails.config.consul.port;
+      var host = typeof (sails === 'undefined' && sails.config === 'undefined') ? '127.0.0.1' : sails.config.consul.host;
+      var port = typeof (sails === 'undefined' && sails.config === 'undefined') ? 8500 : sails.config.consul.port;
 
       this.api = require('consul')({
         host: host,

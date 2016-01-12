@@ -64,6 +64,22 @@
 
       return d;
 
+    },
+    
+    /**
+     * Register a new service  
+     */
+    register: function register(name, options, cb) {
+      options.name = name;
+       
+      this.init().api.agent.check.register(options, cb);
+    },
+    
+    /**
+     * deregister a service  
+     */
+    deregister: function deregister(name, cb) {
+      this.init().api.agent.check.deregister(options, cb);
     }
 
   };

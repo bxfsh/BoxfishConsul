@@ -22,9 +22,17 @@
     init: function index() {
       
       'use strict';
-
-      var host = typeof (sails === 'undefined' && sails.config === 'undefined') ? '127.0.0.1' : sails.config.consul.host;
-      var port = typeof (sails === 'undefined' && sails.config === 'undefined') ? 8500 : sails.config.consul.port;
+      
+      var sails = sails || {};
+      var host = 127.0.0.1;
+      var port = 8500;
+      
+      if (sails.hasOwnProperty('config') && sails.config.hasOwnProperty('consul')) {
+        host = sails.config.consul.host;
+        port = sails.config.consul.port;
+      } else {
+        console.warn('BoxfishConsul plugin requires a \'consul\' object in sails.config with \'host\' and \'port\' properties.');
+      }
 
       this.api = require('consul')({
         host: host,

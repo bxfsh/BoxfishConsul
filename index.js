@@ -2,29 +2,27 @@
 
   'use strict';
 
-  var promise    = require('promised-io/promise');
+  var promise = require('promised-io/promise');
 
-  /**
-   * EpgController
-   *
-   *  Initialise the boxfish consul and returns the api
-   *  docs: https://www.npmjs.com/package/consul
-   *
-   * @description :: Server-side logic for managing Epgs
-   * @help        :: See http://links.sailsjs.org/docs/controllers
-   */
   var consulService = {
 
     /**
      * initialise the consul helper
-     * @return {[type]} [description]
+     * @return {object} returns service
      */
     init: function index() {
-      
       'use strict';
 
-      var host = typeof (sails === 'undefined' && sails.config === 'undefined') ? '127.0.0.1' : sails.config.consul.host;
-      var port = typeof (sails === 'undefined' && sails.config === 'undefined') ? 8500 : sails.config.consul.port;
+      var sails = sails || {};
+      var host = '127.0.0.1';
+      var port = 8500;
+      
+      if (sails.hasOwnProperty('config') && sails.config.hasOwnProperty('consul')) {
+        host = sails.config.consul.host;
+        port = sails.config.consul.port;
+      } else {
+        console.warn('BoxfishConsul service requires a \'consul\' object on sails.config with \'host\' and \'port\' properties');
+      }
 
       this.api = require('consul')({
         host: host,
@@ -36,10 +34,12 @@
 
     /**
      * get the nodes list
-     * @param  {Function} cb [description]
-     * @return {[type]}      [description]
+     * @param  {function} cb - callback
+     * @return void
      */
     nodeList: function nodeList(cb) {
+      'use strict';
+      
       this.init();
       this.api.catalog.node.list(function(err, list) {
         if (err) throw err;
@@ -49,10 +49,11 @@
 
     /**
      * find services by name
-     * @param  {[type]} name [description]
-     * @return {[type]}      [description]
+     * @param  {string} name
+     * @return {promise} returns promise
      */
     findService: function findService(name) {
+      'use strict';
 
       var d = promise.defer();
       var self = this;
@@ -68,17 +69,26 @@
     
     /**
      * Register a new service  
+     * @param {string} name
+     * @param {object} options
+     * @param {function} cb - callback function
      */
     register: function register(name, options, cb) {
+      'use strict';
+      
       options.name = name;
        
       this.init().api.agent.check.register(options, cb);
     },
     
     /**
-     * deregister a service  
+     * Deregister a service  
+     * @param {string} name
+     * @param {function} cb - callback function
      */
     deregister: function deregister(name, cb) {
+      'use strict';
+      
       this.init().api.agent.check.deregister(options, cb);
     }
 

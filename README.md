@@ -1,8 +1,9 @@
 # BoxfishConsul.js
 
 ## Installation
-
-npm install boxfishconsul
+```bash
+npm install boxfishconsul --save
+```
 
 ## Usage
 

@@ -1,6 +1,6 @@
 {
-  "name": "boxfishconsul",
-  "version": "1.0.9",
+  "name": "sails-hook-boxfishconsul",
+  "version": "0.0.1",
   "description": "Consul library for the boxfish ads platform",
   "main": "index.js",
   "scripts": {
@@ -13,6 +13,9 @@
   "keywords": [
     "curl"
   ],
+  "sails": {
+    "isHook": true
+  },
   "author": "Daniel Oliveira <daniel@boxfish.com> (boxfish.com)",
   "license": "ISC",
   "dependencies": {

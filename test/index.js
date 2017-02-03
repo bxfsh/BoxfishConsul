@@ -1,6 +1,6 @@
 var should = require('chai').should();
 var assert = require('chai').assert;
-var consul = require('../src/index');
+var consul = require('../index');
     
 describe('BoxfishConsul', function() {
 

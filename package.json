@@ -1,6 +1,6 @@
 {
   "name": "boxfishconsul",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "Consul library for the boxfish ads platform",
   "main": "index.js",
   "scripts": {

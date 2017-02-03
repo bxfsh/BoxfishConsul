@@ -14,7 +14,7 @@
       
       'use strict';
 
-      var host = '127.0.0.1';
+      var host = 'localhost';
       var port = 8500;
       
       if (sails.config && sails.config.consul) {
@@ -24,16 +24,16 @@
         console.warn('BoxfishConsul service requires a \'consul\' object on sails.config with \'host\' and \'port\' properties');
       }
 
-      console.log('we are here');
-      console.log('-------');
-      console.log('-------');
-      console.log('-------');
-      console.log('-------');
-      console.log('-------');
-      console.log('-------');
-      console.log('-------');
-      console.log('-------');
-      console.log(host, port);
+      // console.log('we are here');
+      // console.log('-------');
+      // console.log('-------');
+      // console.log('-------');
+      // console.log('-------');
+      // console.log('-------');
+      // console.log('-------');
+      // console.log('-------');
+      // console.log('-------');
+      // console.log(host, port);
 
       this.api = require('consul')({
         host: host,

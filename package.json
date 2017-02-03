@@ -1,6 +1,6 @@
 {
   "name": "sails-hook-boxfishconsul",
-  "version": "0.0.1",
+  "version": "1.0.2",
   "description": "Consul library for the boxfish ads platform",
   "main": "index.js",
   "scripts": {

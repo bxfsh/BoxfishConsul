@@ -13,7 +13,7 @@ module.exports = function (sails) {
       sails.log.info('[Sails-Hook-BoxfishConsul] Initialising'.green);
       boxfishConsul.init(sails);
       return cb();
-      
+
     },
 
     /**
@@ -23,6 +23,8 @@ module.exports = function (sails) {
 
 
     },
+
+    consulService: boxfishConsul,
 
     routes: {
       after: { },
